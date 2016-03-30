@@ -17,7 +17,7 @@
  * under the License.
  *
 */
-package org.apache.cordova.dtvchannelsearch;
+package com.apptec.dtvchannelsearch;
 
 import android.app.Activity;
 import android.graphics.Color;

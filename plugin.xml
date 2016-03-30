@@ -20,12 +20,12 @@
 		
         <platform name="android">
 		
-			<source-file src="src/android/DTVChannelSearch.java" target-dir="src/org/apache/cordova/dtvchannelsearch" />
+			<source-file src="src/android/DTVChannelSearch.java" target-dir="src/com/apptec/dtvchannelsearch" />
 			
             <config-file target="res/xml/config.xml" parent="/*">
 			
 				<feature name="DTVChannelSearch">
-					<param name="android-package" value="org.apache.cordova.dtvchannelsearch.DTVChannelSearch" />
+					<param name="android-package" value="com.apptec.dtvchannelsearch.DTVChannelSearch" />
 				</feature>
 				
 			</config-file>
