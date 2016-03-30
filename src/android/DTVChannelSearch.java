@@ -35,15 +35,15 @@ import org.apache.cordova.CordovaWebView;
 import org.apache.cordova.PluginResult;
 import org.json.JSONException;
 
-import java.util.*;
+//import java.util.*;
 //import java.rmi.RemoteException.*;
-import java.lang.Exception.*;
+//import java.lang.Exception.*;
 
 /*import com.sdmc.dtv.acpi.*;
 import com.sdmc.aidl.*;*/
 
-import com.sdmc.aidl.*;
-import com.sdmc.dtv.acpi.*;
+//import com.sdmc.aidl.*;
+//import com.sdmc.dtv.acpi.*;
 
 
 public class DTVChannelSearch extends CordovaPlugin {
@@ -59,20 +59,7 @@ public class DTVChannelSearch extends CordovaPlugin {
     @Override
     public void initialize(final CordovaInterface cordova, CordovaWebView webView) {
         Log.v(TAG, "DTVChannelSearch: initialization");
-        super.initialize(cordova, webView);		
-
-        /*this.cordova.getActivity().runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                // Clear flag FLAG_FORCE_NOT_FULLSCREEN which is set initially
-                // by the Cordova.
-                Window window = cordova.getActivity().getWindow();
-                window.clearFlags(WindowManager.LayoutParams.FLAG_FORCE_NOT_FULLSCREEN);
-
-                // Read 'StatusBarBackgroundColor' from config.xml, default is #000000.
-                setStatusBarBackgroundColor(preferences.getString("StatusBarBackgroundColor", "#000000"));
-            }
-        });*/
+        super.initialize(cordova, webView);
     }
 
     /**
@@ -87,141 +74,33 @@ public class DTVChannelSearch extends CordovaPlugin {
     public boolean execute(final String action, final CordovaArgs args, final CallbackContext callbackContext) throws JSONException {
         Log.v(TAG, "Executing action: " + action);
         final Activity activity = this.cordova.getActivity();
-        final Window window = activity.getWindow();
+        final Window window = activity.getWindow();		
+		
+		return true;
 		
 		/*
-		if("searchChannels".equals(action)) {
-			cordova.getActivity().runOnUiThread(new Runnable() {
-                public void run() {
-                    try {
-						mQuickIntegration.startSearchActivity();
-					} catch (RemoteException e) {
-						e.printStackTrace();
-					}
-                    callbackContext.success(); // Thread-safe.
-                }
-            });
-		}*/
-		
 		if("getBandWidth".equals(action)) {
 			this.cordova.getActivity().runOnUiThread(new Runnable() {
 				@Override
 				public void run() {
-					/*try{
-						ProgramSearch mProgramSearch = new ProgramSearch();
-						List<SearchParcel> lProgramSearch = mProgramSearch.getSearchParcelList();
-						
-					} catch (Exception e) {
-						e.printStackTrace();
-					}
+					/*
+					//try{
+					//	ProgramSearch mProgramSearch = new ProgramSearch();
+					//	List<SearchParcel> lProgramSearch = mProgramSearch.getSearchParcelList();
+					//	
+					//} catch (Exception e) {
+					//	e.printStackTrace();
+					//}
 					
 					
-					SearchParcel mSearchParcel = new SearchParcel(1,1);//getBandWidth();
-					int iBandWidth = mSearchParcel.getBandWidth();
-					*/
-					callbackContext.sendPluginResult(new PluginResult(PluginResult.Status.OK, 1));
+					//SearchParcel mSearchParcel = new SearchParcel(1,1);//getBandWidth();
+					//int iBandWidth = mSearchParcel.getBandWidth();					
+					//callbackContext.sendPluginResult(new PluginResult(PluginResult.Status.OK, 1));
 				}
             });			
 			return true;
 		}
-		
-		
-		//Rodrigo
-		/*if("getBandWidth".equals(action)) {
-			cordova.getActivity().runOnUiThread(new Runnable() {
-                //int iGetBandWidth = getBandWidth();
-				//int iGetBandWidth = 1;
-				//teste
-				boolean bTeste = true;
-				callbackContext.sendPluginResult(new PluginResult(PluginResult.Status.OK, "1"));				
-            });			
-			return true;
-		}*/
-
-        /*if ("_ready".equals(action)) {
-            boolean statusBarVisible = (window.getAttributes().flags & WindowManager.LayoutParams.FLAG_FULLSCREEN) == 0;
-            callbackContext.sendPluginResult(new PluginResult(PluginResult.Status.OK, statusBarVisible));
-            return true;
-        }
-
-        if ("show".equals(action)) {
-            this.cordova.getActivity().runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    // SYSTEM_UI_FLAG_FULLSCREEN is available since JellyBean, but we
-                    // use KitKat here to be aligned with "Fullscreen"  preference
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-                        int uiOptions = window.getDecorView().getSystemUiVisibility();
-                        uiOptions &= ~View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN;
-                        uiOptions &= ~View.SYSTEM_UI_FLAG_FULLSCREEN;
-
-                        window.getDecorView().setSystemUiVisibility(uiOptions);
-                        return;
-                    }
-
-                    window.clearFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
-                }
-            });
-            return true;
-        }
-
-        if ("hide".equals(action)) {
-            this.cordova.getActivity().runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    // SYSTEM_UI_FLAG_FULLSCREEN is available since JellyBean, but we
-                    // use KitKat here to be aligned with "Fullscreen"  preference
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-                        int uiOptions = window.getDecorView().getSystemUiVisibility()
-                                | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
-                                | View.SYSTEM_UI_FLAG_FULLSCREEN;
-
-                        window.getDecorView().setSystemUiVisibility(uiOptions);
-                        return;
-                    }
-
-                    window.addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
-                }
-            });
-            return true;
-        }
-
-        if ("backgroundColorByHexString".equals(action)) {
-            this.cordova.getActivity().runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    try {
-                        setStatusBarBackgroundColor(args.getString(0));
-                    } catch (JSONException ignore) {
-                        Log.e(TAG, "Invalid hexString argument, use f.i. '#777777'");
-                    }
-                }
-            });
-            return true;
-        }
 		*/
-
-        return false;
-    }
-	
-	/*
-    private void setStatusBarBackgroundColor(final String colorPref) {
-        if (Build.VERSION.SDK_INT >= 21) {
-            if (colorPref != null && !colorPref.isEmpty()) {
-                final Window window = cordova.getActivity().getWindow();
-                // Method and constants not available on all SDKs but we want to be able to compile this code with any SDK
-                window.clearFlags(0x04000000); // SDK 19: WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
-                window.addFlags(0x80000000); // SDK 21: WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
-                try {
-                    // Using reflection makes sure any 5.0+ device will work without having to compile with SDK level 21
-                    window.getClass().getDeclaredMethod("setStatusBarColor", int.class).invoke(window, Color.parseColor(colorPref));
-                } catch (IllegalArgumentException ignore) {
-                    Log.e(TAG, "Invalid hexString argument, use f.i. '#999999'");
-                } catch (Exception ignore) {
-                    // this should not happen, only in case Android removes this method in a version > 21
-                    Log.w(TAG, "Method window.setStatusBarColor not found for SDK level " + Build.VERSION.SDK_INT);
-                }
-            }
-        }
-    }*/
+        //return false;
+    }	
 }
