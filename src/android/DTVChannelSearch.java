@@ -17,7 +17,7 @@
  * under the License.
  *
 */
-package com.apptec.DTVChannelSearch;
+package org.apache.cordova.dtvchannelsearch;
 
 import android.app.Activity;
 import android.graphics.Color;
@@ -38,9 +38,6 @@ import org.json.JSONException;
 //import java.util.*;
 //import java.rmi.RemoteException.*;
 //import java.lang.Exception.*;
-
-/*import com.sdmc.dtv.acpi.*;
-import com.sdmc.aidl.*;*/
 
 //import com.sdmc.aidl.*;
 //import com.sdmc.dtv.acpi.*;
