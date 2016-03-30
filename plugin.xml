@@ -18,7 +18,7 @@
 			<source-file src="src/android/DTVChannelSearch.java" target-dir="src/org/apache/cordova/dtvchannelsearch" />
             <config-file target="res/xml/config.xml" parent="/*">
 				<feature name="DTVChannelSearch">
-					<param name="android-package" value="com.apptec.dtvchannelsearch.DTVChannelSearch" />
+					<param name="android-package" value="com.apptec.DTVChannelSearch" />
 				</feature>
 			</config-file>
 			<source-file src="dependencies/dtv_lib/HDTVAndroidPlayerAPI_2.0.4.jar" target-dir="libs" />
