@@ -24,19 +24,21 @@ var exec = require('cordova/exec');
 var DTVChannelSearch = {
 	
 	resultBandWidth: 0,
+	
 	resultExec: false,
 
     getBandWidth: function (callback) {
 		alert("getbandwidth");
-		this.resultBandWidth = 20;		
-		exec( function(result){
+		this.resultBandWidth = 20;
+		exec(function(result){
 				alert("Callback Sucess: " + result);
 				callback(null, result);
 			  }, function(err){
 				alert("Callback Error: " + err);
 				callback(err, null);			
-			  }, "DTVChannelSearch", "getBandWidth", []
-		);		
+			  }, "dtvchannelsearch", "getBandWidth", []
+		);
+		alert("After getBandWidth exec");		
         //exec(null, null, "DTVChannelSearch", "getBandWidth", []);
     }
 };
