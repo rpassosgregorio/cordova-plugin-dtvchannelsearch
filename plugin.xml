@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+    <plugin xmlns="http://apache.org/cordova/ns/plugins/1.0"
+			xmlns="http://schemas.android.com/apk/res/android"
+            id="cordova-plugin-dtvchannelsearch" 
+			version="1.0.0">
+			
+        <name>DTVChannelSearch</name>
+        <description>Cordova Digital TV Channel Search Plugin</description>
+		<author>App Tec</author>
+        <license>Apache 2.0</license>
+        <keywords>cordova,DTV,DTVChannelSearch</keywords>
+		
+		<engines>
+			<engine name="cordova" version=">=3.0.0" />
+		</engines>	
+		
+        <js-module src="www/dtvchannelsearch.js" name="dtvchannelsearch">
+			<clobbers target="window.DTVChannelSearch" />
+		</js-module>
+		
+        <platform name="android">
+		
+			<source-file src="src/android/DTVChannelSearch.java" target-dir="src/com/apptec/dtvchannelsearch" />
+			
+            <config-file target="res/xml/config.xml" parent="/*">
+			
+				<feature name="DTVChannelSearch">
+					<param name="android-package" value="com.apptec.dtvchannelsearch.DTVChannelSearch" />
+				</feature>
+				
+			</config-file>
+			
+			<source-file src="dependencies/dtv_lib/HDTVAndroidPlayerAPI_2.0.4.jar" target-dir="libs" />
+			
+        </platform>
+		
+    </plugin>
