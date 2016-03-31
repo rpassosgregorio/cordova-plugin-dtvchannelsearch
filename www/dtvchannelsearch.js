@@ -28,17 +28,17 @@ var DTVChannelSearch = {
 	resultExec: false,
 
     getBandWidth: function (callback) {
-		alert("getbandwidth");
+		//alert("getbandwidth");
 		this.resultBandWidth = 20;
 		exec(function(winParam){
-				alert("Callback Sucess: " + winParam);
+				//alert("Callback Sucess: " + winParam);
 				callback(null, winParam);
 			  }, function(error){
-				alert("Callback Error: " + error);
+				//alert("Callback Error: " + error);
 				callback(error, null);			
 			  }, "DTVChannelSearch", "getBandWidth", []
 		);
-		alert("After getBandWidth exec");		
+		//alert("After getBandWidth exec");		
         //exec(null, null, "DTVChannelSearch", "getBandWidth", []);
     }
 };
