@@ -35,12 +35,12 @@ import org.apache.cordova.CordovaWebView;
 import org.apache.cordova.PluginResult;
 import org.json.JSONException;
 
-//import java.util.*;
+import java.util.*;
 //import java.rmi.RemoteException.*;
-//import java.lang.Exception.*;
+import java.lang.Exception.*;
 
-//import com.sdmc.aidl.*;
-//import com.sdmc.dtv.acpi.*;
+import com.sdmc.aidl.*;
+import com.sdmc.dtv.acpi.*;
 
 
 public class DTVChannelSearch extends CordovaPlugin {
@@ -73,31 +73,35 @@ public class DTVChannelSearch extends CordovaPlugin {
         final Activity activity = this.cordova.getActivity();
         final Window window = activity.getWindow();		
 		
-		return false;
+		//callbackContext.sendPluginResult(new PluginResult(PluginResult.Status.OK, "Retorno callback java"));
+		//return true;
 		
-		/*
+		
 		if("getBandWidth".equals(action)) {
 			this.cordova.getActivity().runOnUiThread(new Runnable() {
 				@Override
 				public void run() {
-					/*
-					//try{
-					//	ProgramSearch mProgramSearch = new ProgramSearch();
-					//	List<SearchParcel> lProgramSearch = mProgramSearch.getSearchParcelList();
-					//	
-					//} catch (Exception e) {
-					//	e.printStackTrace();
-					//}
+					
+					try{
+						ProgramSearch mProgramSearch = new ProgramSearch();
+						List<SearchParcel> lProgramSearch = mProgramSearch.getSearchParcelList();
+						callbackContext.sendPluginResult(new PluginResult(PluginResult.Status.OK, "Retorno callback java PROGRAMSEARCH >>> "));
+						return;
+					} catch (Exception e) {						
+						e.printStackTrace();
+						callbackContext.sendPluginResult(new PluginResult(PluginResult.Status.OK, "Retorno callback java EXCEPTION >>> "));
+						return;
+					}
 					
 					
-					//SearchParcel mSearchParcel = new SearchParcel(1,1);//getBandWidth();
+					//SearchParcel mSearchParcel = new SearchParcel(2050,6);//getBandWidth();
 					//int iBandWidth = mSearchParcel.getBandWidth();					
-					//callbackContext.sendPluginResult(new PluginResult(PluginResult.Status.OK, 1));
+					//callbackContext.sendPluginResult(new PluginResult(PluginResult.Status.OK, "Retorno callback java NEW >>> " + iBandWidth));
 				}
             });			
 			return true;
 		}
-		*/
-        //return false;
+		
+        return false;
     }	
 }
