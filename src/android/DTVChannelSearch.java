@@ -39,7 +39,6 @@ import org.apache.cordova.CordovaPlugin;
 import org.apache.cordova.CordovaWebView;
 import org.apache.cordova.PluginResult;
 import org.json.JSONException;
-import org.apache.commons.lang3.ArrayUtils;
 
 /*Bibliotecas Java*/
 import java.util.Arrays;
