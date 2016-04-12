@@ -127,7 +127,7 @@ var DTVChannelSearch = {
               callback(null, winParam);
           }, function(error){
               callback(error, null);
-          }, "DTVChannelSearch", "stopDTVACPIManager", [this.channelIDToPlay]
+          }, "DTVChannelSearch", "stopDTVACPIManager", []
       );
     },
 
