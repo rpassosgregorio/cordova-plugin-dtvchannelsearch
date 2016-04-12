@@ -62,10 +62,9 @@ import com.sdmc.dtv.acpi.NoPermissionsException;
 /*### Fim Bibliotecas SDMV - ACPI - high level ###*/
 
 public class DTVChannelSearch extends CordovaPlugin {
-    private static final String TAG = "DTVChannelSearch";
-	//final Activity activityX = this.cordova.getActivity();
+    private static final String TAG = "DTVChannelSearch";	
 	
-	/*Para instanciar, DTVACPIManager tem que ser inicializado*/
+	/*Para instanciar essas classes, DTVACPIManager tem que ser inicializado*/
 	private ProgramInfo piProgramInfo;
 	private ProgramSearch psProgramSearch;
 	private TunerInfo tiTunerInfo;
@@ -82,14 +81,20 @@ public class DTVChannelSearch extends CordovaPlugin {
 	/*Licensa não válida para teste*/
 	//private static final String LICENSE = "license";
 	
-	/*DTVACPIManager não inicializado*/
+	/*Variáveis globais
+		bInitSuccess - controla estado do DTVACPIManager
+			false - não inicializado
+			true - inicializado
+			
+		iLevel - Level de acesso a biblioteca da SDMC
+		bStopSearch - para parar o scan dos canais
+	*/
 	private boolean bInitSuccess = false;
 	private int iLevel = 0;
 	private boolean bStopSearch = false;
 	
-	/*Para pegar excessões do método: */
-	/*private DTVACPIManager.OnInitCompleteListener mOnInitFinishListener*/	
-	/*Motivo: fora do método exec*/
+	/*Para pegar estado do método private DTVACPIManager.OnInitCompleteListener mOnInitFinishListener
+	Motivo: fora do método exec*/
 	private String sTest = " - sTest Não alterado";
 
 	/* Inicialização do plugin
@@ -135,14 +140,18 @@ public class DTVChannelSearch extends CordovaPlugin {
 		//
 		//void onInitComplete(boolean isInitSuccess, int level)
 
-		//Inicia DTVACPIManager
-
+		//Inicia DTVACPIManager - Deve ser inicializada para acesso aos outros métodos
 		if("initDTVACPIManager".equals(action)) {
+			
+			//Tenta inicializar DTVACPIManager
 			DTVACPIManager.init(activity, LICENSE, mOnInitFinishListener);
-			//Falta colocar timeout
+			
+			//Espera a inicialização. Falta colocar timeout
 			while(bInitSuccess == false){
 				Thread.yield();
 			}
+			
+			//Retorna estado da inicialização
 			PluginResult prResult = new PluginResult(PluginResult.Status.NO_RESULT);
 			prResult = new PluginResult(PluginResult.Status.OK,
 										"<br><b>DTVACPIManager Initialized</b>" +
@@ -152,37 +161,37 @@ public class DTVChannelSearch extends CordovaPlugin {
 			prResult.setKeepCallback(true);
 			callbackContext.sendPluginResult(prResult);
 			return true;
-		}
-
+		}//Fim do método initDTVACPIManager
+		
+		//Para o scan dos canais
 		if("stopScanDTVChannels".equals(action)) {
 			bStopSearch = true;
 			return true;
-		}
+		}//Fim do método stopScanDTVChannels
 
-		//Ação do plugin - parâmetro "action"
+		//Retorna o número de canais que já foram escaneados
 		if("getNumberOfChannels".equals(action)) {
 
 			PluginResult prResultNbr = new PluginResult(PluginResult.Status.NO_RESULT);
 
 			try{
-				piProgramInfo = new ProgramInfo();
-				//List<ProgramParcel> ppAllChannels;
-				//ppAllChannels = piProgramInfo.getPrograms();
+				piProgramInfo = new ProgramInfo();				
 
+				//Retorna o número de canais
 				prResultNbr = new PluginResult(PluginResult.Status.OK,"<br>Number Of Channels = " + piProgramInfo.getPrograms().size());
 				prResultNbr.setKeepCallback(true);
 				callbackContext.sendPluginResult(prResultNbr);
 				return true;
 
-			} catch (Exception e){
+			} catch (Exception e){				
 				prResultNbr = new PluginResult(PluginResult.Status.OK,"ERROR IN JAVA (getNumberOfChannels) ");
 				prResultNbr.setKeepCallback(true);
 				callbackContext.sendPluginResult(prResultNbr);
 				return true;
 			}
-		}
+		}//Fim do método getNumberOfChannels
 
-		//Ação do plugin - parâmetro "action"
+		//Retorna a lista de canais escaneados, se houver. Se não houver retorna array vazio
 		if("showAllChannels".equals(action)) {
 			cordova.getThreadPool().execute(new Runnable() {
 				public void run() {
@@ -190,9 +199,8 @@ public class DTVChannelSearch extends CordovaPlugin {
 
 					try {
 						piProgramInfo = new ProgramInfo();
-                        //List<ProgramParcel> ppShowAllChannels;
-						//ppShowAllChannels = piProgramInfo.getPrograms();
-
+                        
+						//Verifica se tem algum canal escaneado e retorna array vazio de não tiver
                         if(piProgramInfo.getPrograms().size() == 0){
                             prResultSAC = new PluginResult(PluginResult.Status.OK,"No channels");
                             prResultSAC.setKeepCallback(true);
@@ -201,6 +209,8 @@ public class DTVChannelSearch extends CordovaPlugin {
                         }
 
 						int iNbrChannelsX = piProgramInfo.getPrograms().size();
+						
+						//Retorna todos os canais disponíveis
                         for (int y = 0; iNbrChannelsX > y; y++) {
                             prResultSAC = new PluginResult(PluginResult.Status.OK,
                                     "Channels ID: " + piProgramInfo.getPrograms().get(y).getId() +
@@ -208,19 +218,7 @@ public class DTVChannelSearch extends CordovaPlugin {
                                             " - Channels Name: " + piProgramInfo.getPrograms().get(y).getName());
                             prResultSAC.setKeepCallback(true);
                             callbackContext.sendPluginResult(prResultSAC);
-                        }
-                        /*
-						for (int y = 0; iNbrChannelsX > y; y++) {
-							prResultSAC = new PluginResult(PluginResult.Status.OK,
-											"Channels ID: " + ppShowAllChannels.get(y).getId() +
-											" - Channels Number: " + ppShowAllChannels.get(y).getProgramNumber() +
-											" - Channels Name: " + ppShowAllChannels.get(y).getName());
-							prResultSAC.setKeepCallback(true);
-							callbackContext.sendPluginResult(prResultSAC);
-						}*/
-
-						//List<ProgramParcel> ppAllChannels;
-						//ppAllChannels = piProgramInfo.getPrograms();
+                        }                        
 					} catch (Exception e) {
 						prResultSAC = new PluginResult(PluginResult.Status.OK, "ERROR IN JAVA (showAllChannels) ");
 						prResultSAC.setKeepCallback(true);
@@ -231,43 +229,28 @@ public class DTVChannelSearch extends CordovaPlugin {
 			return true;
 		}
 
-		//Ação do plugin - parâmetro "action"
+		//Deleta todos os canais e retorna "true" em caso de sucesso ou "false"
 		if("deleteAllPrograms".equals(action)) {
 			cordova.getThreadPool().execute(new Runnable() {
 				public void run() {
+					
 					boolean bIsDeleted;
 					String bufferX;
 
 					PluginResult prResultDel = new PluginResult(PluginResult.Status.NO_RESULT);
 
 					try	{
+						
 						piProgramInfo = new ProgramInfo();
-						List<ProgramParcel> ppAllChannelsX;
-						//List<ProgramParcel> ppDelChannels;
+						List<ProgramParcel> ppAllChannelsX;					
 						int iNbrChannels = 0;
 						int iInitialNbrOfChannels;
 						int iCurrProgramID;
-						//long waitTime = 3000; //fetch starting time
-						//long startTime;
-
-						try{
-							iCurrProgramID = piProgramInfo.getCurrentProgram().getId();
-							piProgramInfo.lockProgram(iCurrProgramID);
-							prResultDel = new PluginResult(PluginResult.Status.OK,
-									"<br>CurrProgram:  " + iCurrProgramID);
-							prResultDel.setKeepCallback(true);
-							callbackContext.sendPluginResult(prResultDel);
-						} catch (Exception e){
-							prResultDel = new PluginResult(PluginResult.Status.OK,
-									"<br>No current program running");
-							prResultDel.setKeepCallback(true);
-							callbackContext.sendPluginResult(prResultDel);
-						}
-
+						
 						ppAllChannelsX = piProgramInfo.getPrograms();
-						iNbrChannels = ppAllChannelsX.size();
-                        //iNbrChannels = piProgramInfo.getPrograms().size();
+						iNbrChannels = ppAllChannelsX.size();                        
 						iInitialNbrOfChannels = iNbrChannels;
+						
 						if (iNbrChannels > 0) {
 
 							prResultDel = new PluginResult(PluginResult.Status.OK,
@@ -281,19 +264,7 @@ public class DTVChannelSearch extends CordovaPlugin {
 
                                 iID = ppAllChannelsX.get(iNbrChannels-1).getId();
 								bIsDeleted = piProgramInfo.deleteProgram(iID);
-                                //this.wait();
-
-								/*startTime = System.currentTimeMillis(); //fetch starting time
-                                while((System.currentTimeMillis()-startTime)<waitTime){
-                                    Thread.yield();
-                                }*/
-
-								/*if(piProgramInfo.getPrograms().size() != iNbrChannels -1){
-                                    iInitialNbrOfChannels = piProgramInfo.getPrograms().size();
-                                    x = 0;
-                                    ppAllChannelsX = piProgramInfo.getPrograms();
-                                    continue;
-                                }*/
+                                
                                 bufferX = "Deleted " + (j+1) + " programs --> ID: " + iID +
                                         //" --> Channel Name: " +ppAllChannels.get(x).getName() +
                                         " --> Nbr of Channels: " + (iNbrChannels - 1) +
@@ -305,18 +276,9 @@ public class DTVChannelSearch extends CordovaPlugin {
                                 callbackContext.sendPluginResult(prResultDel);
                                 iNbrChannels--;
                                 x++;
-                                j++;
-                                //ppAllChannelsX = piProgramInfo.getPrograms();
-								//startTime = System.currentTimeMillis(); //fetch starting time
-								/*while ((System.currentTimeMillis() - startTime) < waitTime) {
-									Thread.yield();
-								}*/
+                                j++;                            
 							}
-							//ppAllChannelsX = piProgramInfo.getPrograms();
-							/*startTime = System.currentTimeMillis(); //fetch starting time
-                            while((System.currentTimeMillis()-startTime)<waitTime){
-                                Thread.yield();
-                            }*/
+							
 							while(piProgramInfo.getPrograms().size() > 0){
 								Thread.yield();
 							}
@@ -337,16 +299,12 @@ public class DTVChannelSearch extends CordovaPlugin {
 				}
 			});
 			return true;
-		}
+		}//Fim do método deleteAllPrograms
 		
-		//Ação do plugin - parâmetro "action"
+		//Faz o scan dos canais
 		if("scanDTVChannels".equals(action)) {
 			cordova.getThreadPool().execute(new Runnable() {
 				public void run() {
-
-					/*this.cordova.getActivity().runOnUiThread(new Runnable() {
-					@Override
-					public void run() {*/
 
 					int iStartFrequency = 177143;
 					int iEndFrequency = 803143;
@@ -355,7 +313,11 @@ public class DTVChannelSearch extends CordovaPlugin {
 					int iCurrentFrequency;
 					int iCurrentBandWidth;
 					boolean bStatusAntena;
-					long startTime = System.currentTimeMillis(); //fetch starting time
+					
+					//fetch starting time
+					long startTime = System.currentTimeMillis(); 
+					
+					//Utiliza a classe que implementa o Listener do scan
                     //searchListener slSearchListener = new searchListener();
 
 					PluginResult prResultRun = new PluginResult(PluginResult.Status.NO_RESULT);
@@ -365,17 +327,8 @@ public class DTVChannelSearch extends CordovaPlugin {
 							= new ProgramSearch.ProgramSearchListener() {
 
 						PluginResult prResultListenerPS = new PluginResult(PluginResult.Status.NO_RESULT);
-						//public void run(){
-						//	cordova.getThreadPool().execute(new Runnable(){
-						//		public void run(){
-						//			prResultListenerPS = new PluginResult(PluginResult.Status.OK,
-						//												  "<br>##########PROGRAM SEARCH LISTENER#########<BR>" +
-						//												  "<br>Retorno callback (1) ProgramSearchListener onBeginOneFreq --> ");
-						//			prResultListenerPS.setKeepCallback(true);
-						//			callbackContext.sendPluginResult(prResultListenerPS);
-						//		}
-						//	});
-						//}
+						
+						//Implementa o método onBeginOneFreq
 						//@Override
 						public void onBeginOneFreq(final SearchParcel parcel) {
 							//cordova.getThreadPool().execute(new Runnable() {
@@ -398,6 +351,8 @@ public class DTVChannelSearch extends CordovaPlugin {
 							//	}
 							//});
 						}
+						
+						//Implementa o método onEndOneFreq
 						//@Override
 						public void onEndOneFreq(final int currentFreqIndex, final int FreqCount, final ProgramParcel[] parcels) {
 
@@ -433,21 +388,25 @@ public class DTVChannelSearch extends CordovaPlugin {
 
 						tiTunerInfo = new TunerInfo();
 						piProgramInfo = new ProgramInfo();
-						List<ProgramParcel> ppAllChannels;
+						List<ProgramParcel> ppAllChannels;						
+						psProgramSearch = new ProgramSearch();
+						
+						//Para verificar estado do scan - Não funcionando
 						List<SearchParcel> getSearchParcelLists;
+						
+						//Seta a frequencia inicial e final para o scan, 
+						//assim como determina a largura de banda
 						spSearchParcel = new SearchParcel(iStartFrequency, iBandWidth);
 						spEndSearchParcel = new SearchParcel(iEndFrequency, iBandWidth);
-						psProgramSearch = new ProgramSearch();
-						//ppInfoCurrentProgram = piProgramInfo.getCurrentProgram();
+						iCurrentFrequency = spSearchParcel.getFrequency();
+						iCurrentBandWidth = spSearchParcel.getBandWidth();						
 
+						//Verifica se a antena está ligada. Se não estiver, liga
 						bStatusAntena = tiTunerInfo.getAntennaPowerOnOff();
 						if (!bStatusAntena) {
 							tiTunerInfo.setAntennaPowerOnOff(true);
 							bStatusAntena = tiTunerInfo.getAntennaPowerOnOff();
 						}
-
-						iCurrentFrequency = spSearchParcel.getFrequency();
-						iCurrentBandWidth = spSearchParcel.getBandWidth();
 
 						prResultRun = new PluginResult(PluginResult.Status.OK,
 													  "<br>########## START SEARCHING - TIME TO WAITING SCAN: " + (iScanTime/60000) + " minutes #########<br>");
@@ -458,28 +417,38 @@ public class DTVChannelSearch extends CordovaPlugin {
 								"<br>Antena On: " + bStatusAntena + "<br>");
 						prResultRun.setKeepCallback(true);
 						callbackContext.sendPluginResult(prResultRun);
-
+						
+						//Seta o listener para o callback quando um canal for localizado
+						psProgramSearch.setSearchListener(pslListener);
+						
+						//Inicia o scan de acordo com a frequência inicial e final, e a largura de banda para o scan
+						psProgramSearch.autoSearch(spSearchParcel, spEndSearchParcel);
 						//psProgramSearch.singleSearch(spSearchParcel);
 						//psProgramSearch.autoSearchByIndex(iStartFrequency,iEndFrequency);
-						psProgramSearch.setSearchListener(pslListener);
-						psProgramSearch.autoSearch(spSearchParcel, spEndSearchParcel);
+						
 						long startScanTime = System.currentTimeMillis();
-
 						int i = 0;
 						int j = 1;
 						String buffer;
 						int iIntervalNothingSearch = 10000;
 						int iIntervalNothingSearchExcep = 10000;
 						boolean bIsDivisibleBy3;
-
+						bStopSearch = false;
+						
+						//Acompanha o scan de acordo com o tempo pré-determinado
 						while ((System.currentTimeMillis() - startTime) < iScanTime) {
+							
+							//Se o método stopAutoSearch for acionado, para o scan
 							if(bStopSearch){
 								psProgramSearch.stopAutoSearch();
 								break;
 							}
-							try {
-								//ppAllChannels = piProgramInfo.getPrograms();
+							
+							try {								
 								getSearchParcelLists = psProgramSearch.getSearchParcelList();
+								
+								//Verifica se foi achado algum canal, e retorna a frequência se sim
+								//Não funcionando psProgramSearch.getSearchParcelList()
 								if (psProgramSearch.getSearchParcelList().size()>0 && psProgramSearch.getSearchParcelList().size()>i){
 									buffer = "<br>Channel Frequency: " + getSearchParcelLists.get(i).getFrequency() +
 											" - Channel Modulation: " + getSearchParcelLists.get(i).getModulation() +
@@ -490,10 +459,9 @@ public class DTVChannelSearch extends CordovaPlugin {
 									callbackContext.sendPluginResult(prResultRun);
 									i++;
 								}
+								
+								//Verifica se nada foi achado durante um intervalo de tempo								
 								if(!((System.currentTimeMillis() - startTime) < iIntervalNothingSearch)) {
-									//ppAllChannels = piProgramInfo.getPrograms();
-									//iCurrentFrequency = spEndSearchParcel.getFrequency();
-									//iCurrentFrequency = psProgramSearch.getSearchParcelList().get(i).getFrequency();
 									bIsDivisibleBy3 = (j-1) % 3 == 0;
 									if(bIsDivisibleBy3){
 										buffer = "<br> * " + j + " - Searching - i = " + i +
@@ -512,6 +480,8 @@ public class DTVChannelSearch extends CordovaPlugin {
 									iIntervalNothingSearch += 10000;
 									j++;
 								}
+								//Entrega o controle da Thread enquanto nenhuma das condições acima
+								//for atendida
 								Thread.yield();
 							} catch (Exception e){
 								if(!((System.currentTimeMillis() - startTime) < iIntervalNothingSearchExcep)) {
@@ -524,14 +494,15 @@ public class DTVChannelSearch extends CordovaPlugin {
 							}
 							//Thread.yield();
 						}
+						//Se o método stopAutoSearch não foi manualmente acionado,
+						//para o scan
 						if(!bStopSearch) {
 							psProgramSearch.stopAutoSearch();
 						}
-
+						
 						bStopSearch = false;
 						ppAllChannels = piProgramInfo.getPrograms();
 						iCurrentFrequency = spEndSearchParcel.getFrequency();
-
 
 						prResultRun = new PluginResult(PluginResult.Status.OK,
 								"<br><br><b>SCAN CHANNELS SUMMARY</b>" +
@@ -551,10 +522,12 @@ public class DTVChannelSearch extends CordovaPlugin {
 						prResultRun.setKeepCallback(true);
 						callbackContext.sendPluginResult(prResultRun);
 						tiTunerInfo.setAntennaPowerOnOff(false);
-						//DTVACPIManager.release();
-						//pslListener.onBeginOneFreq(mSearchParcel);
-
-						//return;
+						
+						//Encerra DTVACPIManager
+						//DTVACPIManager.release();						
+						
+						//Teste manual de retorno do listener
+						//pslListener.onBeginOneFreq(mSearchParcel);						
 					} catch (Exception e) {
 						//Callback Erro
 						callbackContext.sendPluginResult(
@@ -565,39 +538,15 @@ public class DTVChannelSearch extends CordovaPlugin {
 												"<br>Exception (DTVACPIManager)" + sTest
 								)
 						);
-						//return;
-
 					}
 
-					//Métodos testados funcionando - usados para testes
-
-					//Muda o canal
-					//mProgramInfo.playProgram(3);
-
-					//Get Search frequency list
-					//List<SearchParcel> lFreqList = mProgramSearch.getSearchParcelList();
-
-					//getStreamTime - verificar o que é
-					//String sStreamTime = mProgramInfo.getStreamTime();
+					//Métodos testados funcionando - usados para testes					
 
 					//Inicia o módulo para buscar canais digitais pela antena
-					//mQuickIntegration.startSearchActivity();
-
-					//Pega programa corrente e próximo do EPG
-					//List<String> lsPFEPG = mProgramInfo.getPFEPG();
-
-					//Pega programação de hoje e dos próximos 6 dias
-					//List<String> lsTodayEPG = mProgramInfo.getEPG(0);
-					//List<String> lsTomorrowEPG = mProgramInfo.getEPG(1);
-
-					//Pega informações do programa corrente
-					//ProgramParcel mInfoCurrentProgram = mProgramInfo.getCurrentProgram();
+					//mQuickIntegration.startSearchActivity();					
 
 					//Status do sinal do programa corrente
-					//int[] iaSignalStatus = mTunerInfo.getSignalStatus();
-
-					//Precisa testar essa forma de pegar o nome do canal
-					//String sName = ProgramParcel.getName();
+					//int[] iaSignalStatus = mTunerInfo.getSignalStatus();					
 
 					//Fim métodos testados
 
@@ -610,9 +559,10 @@ public class DTVChannelSearch extends CordovaPlugin {
 
 			});	//End getThreadPool
 			return true;
-		}// End if("getBandWidth".equals(action))
+		}// Fim do método scanDTVChannels
 
-		//Ação do plugin - parâmetro "action"
+		//Pega informações do canal corrente
+		//Retorna ID, Número e Nome do canal
 		if("getCurrProgram".equals(action)) {
 			cordova.getThreadPool().execute(new Runnable(){
 				public void run(){
@@ -647,9 +597,13 @@ public class DTVChannelSearch extends CordovaPlugin {
 				}//End public void Run() - getThreadPool
 			});	//End getThreadPool
 			return true;
-		}// End if("getCurrProgram".equals(action))
+		}// Fim do método getCurrProgram
 
-		//Ação do plugin - parâmetro "action"
+		//Pega EPG do canal sintonizado de acordo com o index do dia indicado
+		//0 - Dia corrente
+		//1 a 6 --> próximos seis dias a partir do dia corrente
+		//Retorna string com array vazio se não tem informações
+		//ou string com array com EPG
 		if("getEPGByDayOfTheWeekIndex".equals(action)) {
 			cordova.getThreadPool().execute(new Runnable(){
 				public void run(){
@@ -692,9 +646,11 @@ public class DTVChannelSearch extends CordovaPlugin {
 			});	//End getThreadPool
 			return true;
 
-		}// End if("getAllPrograms".equals(action))
+		}// Fim do método getEPGByDayOfTheWeekIndex
 
-		//Ação do plugin - parâmetro "action"
+		//Pega programa corrente e próximo do canaçl sintonizado
+		//Retorna string com array vazio se não tem informações
+		//ou string com array com EPG
 		if ("getEPGCurrNext".equals(action)) {
 			cordova.getThreadPool().execute(new Runnable(){
 				public void run(){
@@ -728,9 +684,9 @@ public class DTVChannelSearch extends CordovaPlugin {
 			});	//End getThreadPool
 			return true;
 
-		}// End if("getAllPrograms".equals(action))
+		}//Fim do método getEPGCurrNext
 
-		//Ação do plugin - parâmetro "action"
+		//Não funcionando
 		if ("getSearchedFreqList".equals(action)) {
 			cordova.getThreadPool().execute(new Runnable() {
 				public void run() {
@@ -769,17 +725,18 @@ public class DTVChannelSearch extends CordovaPlugin {
 				}//End public void Run() - getThreadPool
 			});	//End getThreadPool
 			return true;
-		}// End if("getAllPrograms".equals(action))
+		}//Fim do método getSearchedFreqList
 
-		//Ação do plugin - parâmetro "action"
+		//Toca o canal informado
+		//Retorna true em caso de sucesso
+		//ou false caso não consiga
 		if("playChannelByID".equals(action)) {
 			//cordova.getThreadPool().execute(new Runnable(){
 			//	public void run(){
 
 					PluginResult prResultPCId;
 					boolean b = true;
-					try{
-						//String sChannelID = args.get(0).toString();
+					try{						
 						piProgramInfo = new ProgramInfo();
 						int iNumberOfChannels = piProgramInfo.getPrograms().size();
 
@@ -826,9 +783,9 @@ public class DTVChannelSearch extends CordovaPlugin {
 				//}//End public void Run() - getThreadPool
 			//});	//End getThreadPool
 			return true;
-		}// End if("getAllPrograms".equals(action))
+		}//Fim do método playChannelByID
 
-		//Ação do plugin - parâmetro "action"
+		//Encerra DTVACPIManager
 		if("stopDTVACPIManager".equals(action)) {
 
 			PluginResult prResult;
@@ -856,7 +813,7 @@ public class DTVChannelSearch extends CordovaPlugin {
 			callbackContext.sendPluginResult(prResult);
 			return true;
 
-		}// End if("getAllPrograms".equals(action))
+		}//Fim do método stopDTVACPIManager
 
 		//If action not equals any planned actions, return false - Invalid action
         return false;
